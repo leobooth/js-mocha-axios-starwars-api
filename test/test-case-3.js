@@ -18,7 +18,7 @@ describe('Star Wars API Test Case 3', function () {
     // Test Case 3: Retrieve a list of all Star Wars films
     it ('should retrieve a list of all Star Wars films', 
     async function () {
-        let timeoutInMs = 20000;
+        let timeoutInMs = 15000;
         this.timeout(timeoutInMs);
         
         let currentPageUrl = `${swapiUrl}/films/`;

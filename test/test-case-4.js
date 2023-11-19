@@ -21,7 +21,7 @@ describe('Star Wars API Test Case 4', function () {
         const filmTitle = "Return of the Jedi";
         let filmDetails = {};
 
-        let timeoutInMs = 10000;
+        let timeoutInMs = 15000;
         this.timeout(timeoutInMs);
 
         let currentPageUrl = `${swapiUrl}/films/`;
