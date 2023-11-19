@@ -1,0 +1,32 @@
+{
+  "scripts": {
+    "test": "mocha"
+  },
+  "name": "js-mocha-axios-starwars-api",
+  "description": "Automated tests for the Star Wars API using JavaScript, Mocha, and Axios",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leobooth/js-mocha-axios-starwars-api.git"
+  },
+  "keywords": [
+    "javascript",
+    "mocha",
+    "axios",
+    "api"
+  ],
+  "author": "Leo Booth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leobooth/js-mocha-axios-starwars-api/issues"
+  },
+  "homepage": "https://github.com/leobooth/js-mocha-axios-starwars-api#readme",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "mocha": "^10.2.0"
+  }
+}
