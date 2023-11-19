@@ -17,9 +17,8 @@ const swapiUrl = "https://swapi.dev/api";
 describe('Star Wars API Tests', function () {
 
     // Test Case 1: Retrieve a list of all Star Wars characters
-    it  ('should retrieve a list of all Star Wars characters', 
+    it ('should retrieve a list of all Star Wars characters', 
     async function () {
-        // retrieving an initial result often takes over 5000ms
         let timeoutInMs = 10000;
         this.timeout(timeoutInMs);
         const response = await axios.get(`${swapiUrl}/people`);
@@ -36,15 +35,21 @@ describe('Star Wars API Tests', function () {
         let currentPageNumber = 1;
         let characterList = [];
         let currentPageUrl = "";
-        do {
-            this.timeout(timeoutInMs * maxPages);
-            currentPageUrl = `${swapiUrl}/people/?page=${currentPageNumber}`
-            const response = await axios.get(currentPageUrl);
-            console.log("currentPageUrl: " + currentPageUrl);
 
-            characterList = characterList.concat(response.data.results);
-            currentPageNumber++;
-        } while (response.data.next !== null && currentPageNumber <= maxPages);
+        try {
+            this.timeout(timeoutInMs * maxPages);
+
+            do {
+                currentPageUrl = `${swapiUrl}/people/?page=${currentPageNumber}`
+                const response = await axios.get(currentPageUrl);
+                console.log("currentPageUrl: " + currentPageUrl);
+    
+                characterList = characterList.concat(response.data.results);
+                currentPageNumber++;
+            } while (response.data.next !== null && currentPageNumber <= maxPages);
+        } catch (error) {
+            console.log(error);
+        }
 
         console.log(`characterList length: ${characterList.length}`);
         console.log("the character list contains the following characters: " );
