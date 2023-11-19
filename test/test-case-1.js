@@ -13,18 +13,18 @@ const swapiUrl = "https://swapi.dev/api";
 // or
 // npm install --save-dev mocha
 
-describe('Star Wars API Tests', function () {
+describe('Star Wars API Test Case 1', function () {
 
     // Test Case 1: Retrieve a list of all Star Wars characters
     it ('should retrieve a list of all Star Wars characters', 
     async function () {
         let timeoutInMs = 10000;
         this.timeout(timeoutInMs);
-        const response = await axios.get(`${swapiUrl}/people`);
+        const response = await axios.get(`${swapiUrl}/people/`);
         assert.strictEqual(response.status, 200, 'Unexpected status code');
         
         const charCount = response.data.count;
-        console.log(`character count: ${charCount}`);
+        console.log(`character count from API: ${charCount}`);
 
         let resultsPerFullPage = 10;
         console.log(`results per page: ${resultsPerFullPage}`);
@@ -62,4 +62,3 @@ describe('Star Wars API Tests', function () {
         assert.equal(charCount, characterList.length);
     });
 });
-

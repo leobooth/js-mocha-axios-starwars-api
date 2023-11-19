@@ -13,14 +13,17 @@ const swapiUrl = "https://swapi.dev/api";
 // or
 // npm install --save-dev mocha
 
-describe('Star Wars API Test Case 3', function () {
+describe('Star Wars API Test Case 4', function () {
 
-    // Test Case 3: Retrieve a list of all Star Wars films
-    it ('should retrieve a list of all Star Wars films', 
+    // Test Case 4: Retrieve details for a specific Star Wars film
+    it ('should retrieve details for a specific Star Wars film', 
     async function () {
-        let timeoutInMs = 20000;
+        const filmTitle = "Return of the Jedi";
+        let filmDetails = {};
+
+        let timeoutInMs = 10000;
         this.timeout(timeoutInMs);
-        
+
         let currentPageUrl = `${swapiUrl}/films/`;
         const response = await axios.get(currentPageUrl);
         assert.strictEqual(response.status, 200, 'Unexpected status code');
@@ -31,12 +34,15 @@ describe('Star Wars API Test Case 3', function () {
 
         let filmList = response.data.results;
 
-        console.log(`filmList length: ${filmList.length}`);
-        console.log("the film list contains the following films: " );
         for (let film in filmList) {
-            console.log(filmList[film].title);
+            if(filmList[film].title === filmTitle) {
+                filmDetails = filmList[film];
+                console.log(`found ${filmDetails.title}`);
+                console.log(filmDetails);
+                break;
+            }
         }
 
-        assert.equal(filmCount, filmList.length);
+        assert.equal(filmTitle, filmDetails.title);
     });
 });
