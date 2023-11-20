@@ -36,22 +36,18 @@ describe('Star Wars API Test Case 1', function () {
         let characterList = [];
         let currentPageUrl = "";
 
-        try {
-            this.timeout(timeoutInMs * maxPages);
+        
+        this.timeout(timeoutInMs * maxPages);
+        do {
+            currentPageUrl = `${swapiUrl}/people/?page=${currentPageNumber}`;
+            const response = await axios.get(currentPageUrl);
+            assert.strictEqual(response.status, 200, 'Unexpected status code');
 
-            do {
-                currentPageUrl = `${swapiUrl}/people/?page=${currentPageNumber}`;
-                const response = await axios.get(currentPageUrl);
-                assert.strictEqual(response.status, 200, 'Unexpected status code');
+            console.log("currentPageUrl: " + currentPageUrl);
 
-                console.log("currentPageUrl: " + currentPageUrl);
-    
-                characterList = characterList.concat(response.data.results);
-                currentPageNumber++;
-            } while (response.data.next !== null && currentPageNumber <= maxPages);
-        } catch (error) {
-            console.log(error);
-        }
+            characterList = characterList.concat(response.data.results);
+            currentPageNumber++;
+        } while (response.data.next !== null && currentPageNumber <= maxPages);
 
         console.log(`characterList length: ${characterList.length}`);
         console.log("the character list contains the following characters: " );
@@ -61,4 +57,18 @@ describe('Star Wars API Test Case 1', function () {
 
         assert.equal(charCount, characterList.length);
     });
+
+    // TODO:
+    // response should contain more than one result
+    // response should contain more than one page
+    // response should be able to paginate through all pages
+
+    // each page of the response that is not the first page should contain a previous page
+    // each page of the response that is not the last page should contain a next page
+
+    // query outside expected page length should return 404 not found (upper bound)
+
+    // queries outside expected page length should return 404 not found (lower bound) ex: ?page=0, ?page=-1
+
+    // the 'name' value of each response result should not be empty or null
 });
