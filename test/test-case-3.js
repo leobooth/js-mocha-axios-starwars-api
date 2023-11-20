@@ -16,8 +16,7 @@ const swapiUrl = "https://swapi.dev/api";
 describe('Star Wars API Test Case 3', function () {
 
     // Test Case 3: Retrieve a list of all Star Wars films
-    it ('should retrieve a list of all Star Wars films', 
-    async function () {
+    it ('should retrieve a list of all Star Wars films', async function () {
         let timeoutInMs = 15000;
         this.timeout(timeoutInMs);
         
@@ -39,4 +38,8 @@ describe('Star Wars API Test Case 3', function () {
 
         assert.equal(filmCount, filmList.length);
     });
+
+    // only six films (no pages if results per page = 10); the search results should have 'next' and 'previous' values equal to null
+    // query outside expected page length should return 404 not found (upper bound)
+    // queries outside expected page length should return 404 not found (lower bound) ex: ?page=0, ?page=-1
 });
