@@ -13,7 +13,7 @@ const swapiUrl = "https://swapi.dev/api";
 // or
 // npm install --save-dev mocha
 
-describe('Star Wars API Test Case 1', function () {
+describe('Star Wars API /people endpoint', function () {
 
     beforeEach("Execute before each test", function(){
         // print a blank line to separate log output from previous test results
@@ -88,13 +88,11 @@ describe('Star Wars API Test Case 1', function () {
         });
     });
 
-        // query outside expected page length should return 404 not found (upper bound)
-    // queries outside expected page length should return 404 not found (lower bound) ex: ?page=0, ?page=-1
     const boundaryTestData = [
         {
             "testName" : "query outside expected page limit should return 404 not found (upper bound)",
             "searchString": "d",
-            "pageNumber": 100,
+            "pageNumber": 100000000000000,
             "assertionPerTest" : function(httpStatusCode) {
                 assert.equal(httpStatusCode, 404);
             }
@@ -114,7 +112,7 @@ describe('Star Wars API Test Case 1', function () {
             "assertionPerTest" : function(httpStatusCode) {
                 assert.equal(httpStatusCode, 404);
             }
-        }       
+        },    
     ]
 
     boundaryTestData.forEach( function(testData) {

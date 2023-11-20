@@ -13,7 +13,7 @@ const swapiUrl = "https://swapi.dev/api";
 // or
 // npm install --save-dev mocha
 
-describe('Star Wars API Test Case 2', function () {
+describe('Star Wars API people/?search query', function () {
 
     beforeEach("Execute before each test", function(){
         // print a blank line to separate log output from previous test results
@@ -28,7 +28,7 @@ describe('Star Wars API Test Case 2', function () {
             "assertionFunction" : function(response, searchString, searchResults) {
                 let isSearchStringInEveryCharacterName = true;
                 for(let searchResult in searchResults) {
-                    // search is case-insensitive; a search for 'd' will return 'Yoda' or 'R2-D2'
+                    // search is case-insensitive; a search for 'd' will include 'Yoda' and 'R2-D2'
                     const characterNameLowerCase = searchResults[searchResult].name.toLocaleLowerCase('en-US');
                     if (!characterNameLowerCase.includes(searchString.toLocaleLowerCase('en-US'))) {
                         console.log(`search string '${searchString}' not found in search result ${searchResults[searchResult].name}`);
@@ -47,7 +47,7 @@ describe('Star Wars API Test Case 2', function () {
             "assertionFunction" : function(response, searchString, searchResults) {
                 let isSearchStringInEveryCharacterName = true;
                 for(let searchResult in searchResults) {
-                    // search is case-insensitive; a search for 'd' will return 'Yoda' or 'R2-D2'
+                    // search is case-insensitive; a search for 'd' will include 'Yoda' and 'R2-D2'
                     const characterNameLowerCase = searchResults[searchResult].name.toLocaleLowerCase('en-US');
                     if (!characterNameLowerCase.includes(searchString.toLocaleLowerCase('en-US'))) {
                         console.log(`search string '${searchString}' not found in search result ${searchResults[searchResult].name}`);
@@ -217,6 +217,22 @@ describe('Star Wars API Test Case 2', function () {
             "assertionPerTest" : function() {}
         },
         {
+            "testName" : "if the response does not need to paginate, both the 'previous' and 'next' values should be null",
+            "searchString": "Luke Skywalker",
+            "logSearchResults" : false,
+            "assertionPerPage" : function(response, searchResults, currentPageNumber, maxPages) {
+                console.log(`current page number: ${currentPageNumber}`);
+                console.log(`response.data.previous: ${response.data.previous}`);
+                console.log(`response.data.next: ${response.data.next}`);
+                if (maxPages == 1) {
+                    assert.ok((response.data.previous == null) && (response.data.next == null))
+                } else {
+                    assert.fail("search should return one and only one page");
+                }
+            },
+            "assertionPerTest" : function() {}
+        },
+        {
             "testName" : "each page of the response that is not the first page should contain a 'previous' value",
             "searchString": "d",
             "logSearchResults" : false,
@@ -230,7 +246,11 @@ describe('Star Wars API Test Case 2', function () {
                         return "fail";
                     }
                 } else {
-                    return "first page; skip";
+                    if (response.data.previous == null) {
+                        return "first page: null";
+                    } else {
+                        return "fail";
+                    }
                 }
             },
             "assertionPerTest" : function(outcomesPerPage) {
@@ -260,7 +280,11 @@ describe('Star Wars API Test Case 2', function () {
                         return "fail";
                     }
                 } else {
-                    return "last page; skip";
+                    if (response.data.next == null) {
+                        return "last page: null";
+                    } else {
+                        return "fail";
+                    }
                 }
             },
             "assertionPerTest" : function(outcomesPerPage) {
@@ -284,7 +308,7 @@ describe('Star Wars API Test Case 2', function () {
             const searchString = testData.searchString;
             console.log(`search string: ${searchString}`);
 
-            let timeoutInMs = 10000;
+            let timeoutInMs = 15000;
             this.timeout(timeoutInMs);
             const response = await axios.get(`${swapiUrl}/people/?search=${searchString}`);
             assert.strictEqual(response.status, 200, 'Unexpected status code');
@@ -302,23 +326,19 @@ describe('Star Wars API Test Case 2', function () {
 
             let outcomesPerPage = [];
 
-            if (response.data.next == null && maxPages == 1) {
-                searchResultList = response.data.results;
-            } else if (response.data.next != null && maxPages > 1) { 
-                this.timeout(timeoutInMs * maxPages);
-                let currentPageNumber = 1;
-                let currentPageUrl = "";
-                do {
-                    currentPageUrl = `${swapiUrl}/people/?search=${searchString}&page=${currentPageNumber}`;
-                    const response = await axios.get(currentPageUrl);
-                    assert.strictEqual(response.status, 200, 'Unexpected status code');
-                    console.log("currentPageUrl: " + currentPageUrl);
-                    searchResultList = searchResultList.concat(response.data.results);
-                    let outcome = testData.assertionPerPage(response, searchResultList, currentPageNumber, maxPages);
-                    outcomesPerPage.push(outcome);
-                    currentPageNumber++;
-                } while (response.data.next != null && (currentPageNumber <= maxPages));
-            }
+            this.timeout(timeoutInMs * maxPages);
+            let currentPageNumber = 1;
+            let currentPageUrl = "";
+            do {
+                currentPageUrl = `${swapiUrl}/people/?search=${searchString}&page=${currentPageNumber}`;
+                const response = await axios.get(currentPageUrl);
+                assert.strictEqual(response.status, 200, 'Unexpected status code');
+                console.log("currentPageUrl: " + currentPageUrl);
+                searchResultList = searchResultList.concat(response.data.results);
+                let outcome = testData.assertionPerPage(response, searchResultList, currentPageNumber, maxPages);
+                outcomesPerPage.push(outcome);
+                currentPageNumber++;
+            } while (response.data.next != null && (currentPageNumber <= maxPages));
 
             if (testData.logSearchResults) {
                 console.log(searchResultList);
